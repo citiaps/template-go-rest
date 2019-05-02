@@ -5,7 +5,6 @@ import (
   "net/http"
 	"github.com/gin-gonic/gin"
   "log"
-  "encoding/json"
 	"github.com/citiaps/template-go-rest/db"
 	"github.com/citiaps/template-go-rest/utils"
 )
@@ -16,7 +15,7 @@ type User struct {
 	Id              bson.ObjectId  `json:"id"              bson:"_id"`
 	Email           string         `json:"email"           bson:"email"`
   Nombre          string         `json:"nombre"          bson:"nombre"`
-  Rol             string         `json:"rol"             bson:"rol"`	
+  Rol             string         `json:"rol"             bson:"rol"`
   Hash            string         `json:"_hash"           bson:"_hash,omitempty"`
 }
 
@@ -30,48 +29,7 @@ type AuthRoles struct{
 
 
 
-//funcion tipo middleware que define si el usuario esta autorizado a utilizar la siguiente funcion
-func AuthorizatorFunc(data interface{}, c *gin.Context) bool {
-	log.Print("AuthorizatorFunc\n")
 
-  if byteData, err:= json.Marshal(data); err!= nil {
-		log.Print(err.Error())
-		return false
-	}else{
-		var user User
-		json.Unmarshal(byteData, &user)
-
-
-		session := db.MongoSession()
-		defer session.Close()
-
-		database := db.MongoDatabase(session)
-	  colUser := db.MongoCollection(collectionNameUser, database)
-
-		var usuario User
-
-	  if err := colUser.FindId(bson.ObjectId(user.Id)).One(&usuario); err != nil{
-	    return false
-	  } else {
-			roles := c.MustGet("roles").(AuthRoles)
-			log.Printf("%v\n",roles)
-			if user.Rol == "ROL1" && usuario.Rol==user.Rol && roles.Rol1{
-				log.Print("ERA ROL1 :D")
-				return true
-			}
-			if user.Rol == "ROL2" && usuario.Rol==user.Rol && roles.Rol2{
-				log.Print("ERA ROL2 :D")
-				return true
-			}
-			if user.Rol == "ROL3" && usuario.Rol==user.Rol && roles.Rol3{
-				log.Print("ERA ROL3 :D")
-				return true
-			}
-
-			return false
-	  }
-	}
-}
 
 
 func GetUser(c *gin.Context){

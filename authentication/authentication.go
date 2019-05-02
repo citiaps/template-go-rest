@@ -11,9 +11,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"github.com/appleboy/gin-jwt"
 	"errors"
-
+	"encoding/json"
 	"github.com/gin-gonic/gin"
-
+	"os"
 )
 
 var collectionNameUser = "user_model"
@@ -44,7 +44,6 @@ func LoginFunc(c *gin.Context) (interface{}, error) {
 		//return nil, jwt.ErrFailedAuthentication
 		return nil, errors.New("Usuario y contraseña incorrectos")
 	}else{
-    log.Printf("Comparando: %s\n con %s\n",usuario.Hash, loginVals.Password)
 		if err:= ComparePasswords(usuario.Hash, loginVals.Password); err!=nil{
 			//return nil, jwt.ErrFailedAuthentication
 			return nil, errors.New("Usuario y contraseña incorrectos")
@@ -72,6 +71,48 @@ func ComparePasswords(storedHash string, loginPass string) error {
     return nil
 }
 
+//funcion tipo middleware que define si el usuario esta autorizado a utilizar la siguiente funcion
+func AuthorizatorFunc(data interface{}, c *gin.Context) bool {
+	log.Print("AuthorizatorFunc\n")
+
+  if byteData, err:= json.Marshal(data); err!= nil {
+		log.Print(err.Error())
+		return false
+	}else{
+		var user models.User
+		json.Unmarshal(byteData, &user)
+
+
+		session := db.MongoSession()
+		defer session.Close()
+
+		database := db.MongoDatabase(session)
+	  colUser := db.MongoCollection(collectionNameUser, database)
+
+		var usuario models.User
+
+	  if err := colUser.FindId(bson.ObjectId(user.Id)).One(&usuario); err != nil{
+	    return false
+	  } else {
+			roles := c.MustGet("roles").(models.AuthRoles)
+			log.Printf("%v\n",roles)
+			if user.Rol == "ROL1" && usuario.Rol==user.Rol && roles.Rol1{
+				log.Print("ERA ROL1 :D")
+				return true
+			}
+			if user.Rol == "ROL2" && usuario.Rol==user.Rol && roles.Rol2{
+				log.Print("ERA ROL2 :D")
+				return true
+			}
+			if user.Rol == "ROL3" && usuario.Rol==user.Rol && roles.Rol3{
+				log.Print("ERA ROL3 :D")
+				return true
+			}
+
+			return false
+	  }
+	}
+}
 
 //funcion que se llama en caso de no estar autorizado a accesar al servicio
 func UnauthorizedFunc(c *gin.Context, code int, message string) {
@@ -88,7 +129,6 @@ func PayLoad(data interface{}) jwt.MapClaims {
 	log.Print(reflect.TypeOf(data))
 	log.Printf("%v\n",data)
   if v, ok := data.(models.User); ok {
-		log.Printf("ERA TRUEEE :D")
 		claim := jwt.MapClaims{
 			"id":v.Id,
       "email": v.Email,
@@ -98,7 +138,6 @@ func PayLoad(data interface{}) jwt.MapClaims {
 		log.Printf("%v",claim)
     return claim
   }
-	log.Print("ERA FALSOOOOOOOOOOO :O\n")
   return jwt.MapClaims{}
 }
 
@@ -117,21 +156,31 @@ func IdentityHandlerFunc(c *gin.Context) interface{} {
 }
 
 
-type authFunc func(data interface{}, c *gin.Context) bool
 type loginFunc func(c *gin.Context) (interface{}, error)
 
-func LoadJWTAuth(authorizationFN authFunc, login loginFunc) *jwt.GinJWTMiddleware{
+func LoadJWTAuth( login loginFunc) *jwt.GinJWTMiddleware{
 	log.Print("LoadJWTAuth\n")
+	var key string
+	var set bool
+	key, set = os.LookupEnv("JWT_KEY")
+	if !set{
+		key = "string_largo_unico_por_proyecto"
+	}
+
+	log.Println("key: "+key)
+
   authMiddleware, err :=jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
-		Key:         []byte("85c145a16bd6f6e1f3e104ca78c6a102"),
-		Timeout:     time.Hour*24*7,
+		Key:         []byte(key),
+		//tiempo que define cuanto vence el jwt
+		Timeout:     time.Hour*24*7,//una semana
+		//tiempo maximo para poder refrescar el jwt token
 		MaxRefresh:  time.Hour*24*7,
 
 		PayloadFunc: PayLoad,
 		IdentityHandler: IdentityHandlerFunc,
 		Authenticator: login ,
-		Authorizator: authorizationFN,
+		Authorizator: AuthorizatorFunc,
 		Unauthorized: UnauthorizedFunc,
 		//HTTPStatusMessageFunc: ResponseFunc,
 		// TokenLookup is a string in the form of "<source>:<name>" that is used

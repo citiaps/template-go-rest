@@ -7,7 +7,7 @@ import (
 )
 
 func Setup(app *gin.Engine) {
-	authNormal := authentication.LoadJWTAuth(models.AuthorizatorFunc, authentication.LoginFunc)
+	authNormal := authentication.LoadJWTAuth(authentication.LoginFunc)
 
 	// Refresh time can be longer than token timeout
 	app.GET("/refresh_token",
