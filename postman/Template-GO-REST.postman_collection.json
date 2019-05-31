@@ -1,0 +1,326 @@
+{
+	"info": {
+		"_postman_id": "ac6722da-6a29-45cb-94aa-7a2a7b09dc02",
+		"name": "Template-GO-REST",
+		"description": "Plantilla de APi REST escrita en golang, utilizando el framework GIN.\n\nComo ejemplo se manejan perros asociados a dueños (usuarios)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Dog",
+			"item": [
+				{
+					"name": "Get Dogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/dogs",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"dogs"
+							]
+						},
+						"description": "Collection GET"
+					},
+					"response": []
+				},
+				{
+					"name": "Get One Dog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/dogs/5cf17b46ea054f5d4f9e6467",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"dogs",
+								"5cf17b46ea054f5d4f9e6467"
+							]
+						},
+						"description": "Collection GET"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Dog",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"age\":9\n}\n"
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/dogs",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"dogs"
+							]
+						},
+						"description": "Collection PUT"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Dog",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"age\": 10\n}\n"
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/dogs/5cf17b46ea054f5d4f9e6467",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"dogs",
+								"5cf17b46ea054f5d4f9e6467"
+							]
+						},
+						"description": "Collection PUT"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Dog",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/dogs/5cf17b77ea054f5d4f9e6468",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"dogs",
+								"5cf17b77ea054f5d4f9e6468"
+							]
+						},
+						"description": "Collection PUT"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aaa27f8d-18d7-4ffb-8200-a523cc8fc510",
+								"exec": [
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\":\"usuario@usach.com\",\n\t\"password\":\"clave1234\"\n}"
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/login",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						},
+						"description": "Collection GET"
+					},
+					"response": []
+				},
+				{
+					"name": "Get One User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/user/5cdc7b53ea054f3a0b3c1def",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"5cdc7b53ea054f3a0b3c1def"
+							]
+						},
+						"description": "Collection GET"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\":\"usuario@usach.com\",\n  \"password\":\"clave1234\"\n}\n"
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/user",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user"
+							]
+						},
+						"description": "Collection PUT"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"Clasificador {{$timestamp}}\"\n}\n"
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/user/5cdc7b53ea054f3a0b3c1def",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"5cdc7b53ea054f3a0b3c1def"
+							]
+						},
+						"description": "Collection PUT"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{address}}/api/v1/user/5cdc7b53ea054f3a0b3c1def",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"5cdc7b53ea054f3a0b3c1def"
+							]
+						},
+						"description": "Collection PUT"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	}
+}
