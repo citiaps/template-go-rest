@@ -9,7 +9,7 @@ import (
 	"github.com/citiaps/template-go-rest/model"
 	"github.com/citiaps/template-go-rest/util"
 
-	jwt "github.com/appleboy/gin-jwt"
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
 	"golang.org/x/crypto/bcrypt"

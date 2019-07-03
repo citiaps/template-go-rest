@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	jwt "github.com/appleboy/gin-jwt"
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/citiaps/template-go-rest/util"
 
 	"github.com/gin-gonic/gin"
