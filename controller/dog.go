@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -14,6 +15,10 @@ import (
 
 // DogController : Controlador de perro
 type DogController struct {
+}
+type PaginationParams struct {
+	Limit  int `form:"limit"`
+	Offset int `form:"offset"`
 }
 
 // Routes : Define las rutas del controlador
@@ -39,12 +44,24 @@ var dogModel model.Dog
 // GetAll : Obtener todos los perros
 func (dogController *DogController) GetAll() func(c *gin.Context) {
 	return func(c *gin.Context) {
-
-		groups, err := dogModel.Find(bson.M{})
+		/* obtener parametros de paginacion*/
+		pagination := PaginationParams{}
+		err := c.ShouldBind(&pagination)
 		if err != nil {
-			c.JSON(http.StatusNotFound, util.GetError("No se pudo obtener la lista de grupos", err))
+			c.JSON(http.StatusBadRequest, util.GetError("No se puedieron encontrar los parametros limit, offset", err))
+			return
 		}
-		c.JSON(http.StatusOK, groups)
+		page, err := dogModel.FindPaginate(bson.M{}, pagination.Limit, pagination.Offset)
+
+		if err != nil {
+			c.JSON(http.StatusNotFound, util.GetError("No se pudo obtener la lista de perros", err))
+		}
+		// c.Header("",page.Metadata.)
+		if len(page.Metadata) != 0 {
+			c.Header("Pagination-Count", fmt.Sprintf("%d", page.Metadata[0]["total"]))
+		}
+
+		c.JSON(http.StatusOK, page.Data)
 	}
 }
 
@@ -64,7 +81,7 @@ func (dogController *DogController) Create() func(c *gin.Context) {
 		dog.Owner = user.ID
 		err = dogModel.Create(&dog)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, util.GetError("No se pudo insertar grupo", err))
+			c.JSON(http.StatusBadRequest, util.GetError("No se pudo insertar perro", err))
 			return
 		}
 
@@ -87,7 +104,7 @@ func (dogController *DogController) One() func(c *gin.Context) {
 		}
 		group, err := dogModel.Get(id)
 		if err != nil {
-			c.JSON(http.StatusNotFound, util.GetError("No se encontró grupo", err))
+			c.JSON(http.StatusNotFound, util.GetError("No se encontró perro", err))
 			return
 		}
 		c.JSON(http.StatusOK, group)
@@ -117,7 +134,7 @@ func (dogController *DogController) Update() func(c *gin.Context) {
 		// Update
 		err = dogModel.Update(id, dog)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, util.GetError("No se pudo actualizar grupo", err))
+			c.JSON(http.StatusBadRequest, util.GetError("No se pudo actualizar perro", err))
 			return
 		}
 
@@ -140,7 +157,7 @@ func (dogController *DogController) Delete() func(c *gin.Context) {
 		}
 		err := dogModel.Delete(id)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, util.GetError("No se pudo encontrar grupo", err))
+			c.JSON(http.StatusBadRequest, util.GetError("No se pudo encontrar perro", err))
 			return
 		}
 		c.String(http.StatusOK, "")

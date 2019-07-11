@@ -108,9 +108,11 @@ func UnauthorizedFunc(c *gin.Context, code int, message string) {
 
 //PayLoad : funcion que define lo que tendra el jwt que se enviara al realizarse el login
 func PayLoad(data interface{}) jwt.MapClaims {
+	user := data.(model.User)
+	usuario := model.User{Email: user.Email, Name: user.Name, ID: user.ID}
 	if v, ok := data.(model.User); ok {
 		claim := jwt.MapClaims{
-			"user": data.(model.User),
+			"user": usuario,
 			"rol":  v.Rol,
 		}
 		log.Printf("%v", claim)

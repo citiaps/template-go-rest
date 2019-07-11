@@ -10,6 +10,12 @@ type Dog struct {
 	Owner bson.ObjectId `json:"owner" bson:"owner,omitempty"`
 }
 
+// Page : Pagina de resultado
+type Page struct {
+	Metadata []map[string]int `json:"metadata" bson:"metadata,omitempty"`
+	Data     []interface{}    `json:"data" bson:"data,omitempty"`
+}
+
 // Create : Crear perro por ID
 func (dogModel *Dog) Create(dogDoc *Dog) error {
 	col, session := GetCollection(CollectionNameDog)
@@ -57,4 +63,27 @@ func (dogModel *Dog) Find(query bson.M) ([]Dog, error) {
 
 	err := col.Find(query).All(&dogs)
 	return dogs, err
+}
+
+// FindPaginate : Obtener perro
+func (dogModel *Dog) FindPaginate(query bson.M, limit int, offset int) (Page, error) {
+
+	col, session := GetCollection(CollectionNameDog)
+	defer session.Close()
+	pag := []bson.M{{"$skip": offset}}
+	if limit > 0 {
+		pag = append(pag, bson.M{"$limit": limit})
+	}
+	pipeline := []bson.M{
+		bson.M{"$match": query},
+		bson.M{"$facet": bson.M{
+			"metadata": []bson.M{{"$count": "total"}},
+			"data":     pag, // add projection here wish you re-shape the docs
+		}},
+	}
+
+	pageDoc := Page{}
+	err := col.Pipe(pipeline).One(&pageDoc)
+
+	return pageDoc, err
 }
