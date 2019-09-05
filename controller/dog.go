@@ -16,10 +16,6 @@ import (
 // DogController : Controlador de perro
 type DogController struct {
 }
-type PaginationParams struct {
-	Limit  int `form:"limit"`
-	Offset int `form:"offset"`
-}
 
 // Routes : Define las rutas del controlador
 func (dogController *DogController) Routes(base *gin.RouterGroup, authNormal *jwt.GinJWTMiddleware) *gin.RouterGroup {
