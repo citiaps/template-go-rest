@@ -18,6 +18,8 @@ func main() {
 	time.Local = time.UTC
 	// Cargar Variables de entorno:
 	util.LoadEnv()
+
+	// Log
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 	log.Println("Start template-go-rest")
 	log.Printf("serverUp, %s", os.Getenv("ADDR"))
@@ -25,20 +27,14 @@ func main() {
 	// Cargar base de datos
 	model.LoadDatabase()
 
-	// Controllers
-	var authenticationController controller.AuthenticationController
-	var dogController controller.DogController
 	//Raiz
 	app := gin.Default()
 	// CORS
 	app.Use(middleware.CorsMiddleware())
 	// Url Base
 	base := app.Group("/api/v1/")
-	authNormal := middleware.LoadJWTAuth(middleware.LoginFunc)
 
-	// Collection - Rutas
-	authenticationController.Routes(base, authNormal)
-	dogController.Routes(base, authNormal)
+	controller.Routes(base)
 
 	app.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"message": "Servicio no encontrado."})

@@ -39,8 +39,6 @@ func (dogController *DogController) Routes(base *gin.RouterGroup, authNormal *jw
 	return dogRouter
 }
 
-var dogModel model.Dog
-
 // GetAll : Obtener todos los perros
 func (dogController *DogController) GetAll() func(c *gin.Context) {
 	return func(c *gin.Context) {
